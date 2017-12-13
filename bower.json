@@ -1,0 +1,21 @@
+{
+  "name": "imooc_site",
+  "description": "",
+  "main": "app.js",
+  "authors": [
+    "Bianwangyang"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  }
+}
