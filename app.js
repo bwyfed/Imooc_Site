@@ -4,18 +4,20 @@
 var express = require('express');
 var path = require('path');
 var mongoose = require('mongoose');
+var _ = require('underscore');
 var bodyParser = require('body-parser');
 var port = process.env.PORT || 3000; //获取命令行里的全局环境变量
 var app = express();    //创建web服务器
 
-var Movie = require('./models/movie');
-mongoose.connect('mongodb://localhost/imooc');
+var Movie = require('./models/movie');  //加载Movie数据模型
+mongoose.connect('mongodb://localhost/imooc');//连接指定的数据库实例
 
 app.set('views','./views/pages');//设置视图的根目录
 app.set('view engine','jade');//设置默认的模板引擎
-app.use(bodyParser());  //对表单提交的数据进行格式化 bodyParser.json()?
+app.use(bodyParser.json());  //对表单提交的数据进行格式化 bodyParser.json()?
+app.use(bodyParser.urlencoded({ extended: true}));
 app.use(express.static(path.join(__dirname,'bower_components')));//托管静态资源
-app.locals.moment = require('moment');
+app.locals.moment = require('moment'); //添加moment模块
 app.listen(port);
 
 console.log('imooc start on port ' + port);
@@ -63,7 +65,7 @@ app.get('/',function(req, res){
 
 // detail page
 app.get('/movie/:id',function(req, res){
-    var id = req.params.id;
+    var id = req.params.id; //获取movie的id
     Movie.findById(id, function (err, movie) {
         res.render('detail',{
             title: 'imooc ' + movie.title,
@@ -101,8 +103,9 @@ app.get('/admin/movie',function(req, res){
         }
     });
 });
-// admin update movie 更新数据
-app.get('admin/update/:id',function(req, res) {
+// admin update movie 更新电影
+// 在列表页点击更新时，会重新回到后台录入页，需要将电影数据初始化到表单中
+app.get('/admin/update/:id',function(req, res) {
     var id = req.params.id;
     if(id) {
         Movie.findById(id, function (err, movie) {
@@ -113,26 +116,29 @@ app.get('admin/update/:id',function(req, res) {
         })
     }
 });
-// admin post movie 处理提交的数据
-app.post('admin/movie/new',function (res, req) {
-    var id = req.body.movie._id;
+// admin post movie
+// 处理后台录入页admin的表单提交的数据
+app.post('/admin/movie/new',function (req, res) {
+    var id = req.body.movie._id;    //拿到这个电影的id，放在隐藏域中
     var movieObj = req.body.movie;
     var _movie;
-
-    if(id !== undefined) {
+    //判断数据是新加的还是更新已有数据
+    if(id !== 'undefined') {//说明电影是已经存储过的
         Movie.findById(id, function (err, movie) {
             if(err) {
                 console.log(err);
             }
+            //用post过来的数据movieObj更新已有的电影数据movie
             _movie = _.extend(movie, movieObj);
             _movie.save(function(err, movie){
                 if(err) {
                     console.log(err);
                 }
+                //更新成功后，重定向到详情页面
                 res.redirect('/movie/' + movie._id);
             })
         })
-    } else {
+    } else {    //该电影是新加的,将传过来的字段构成一个新对象，存储进来
         _movie = new Movie({
             doctor: movieObj.doctor,
             title: movieObj.title,

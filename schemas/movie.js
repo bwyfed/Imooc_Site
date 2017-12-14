@@ -43,7 +43,8 @@ MovieSchema.statics = {
             .sort('meta.updataAt')
             .exec(cb);
     },
-    findById: function(cb) {
+    //查询单条数据
+    findById: function(id, cb) {
         return this
             .findOne({_id: id})
             .exec(cb);
