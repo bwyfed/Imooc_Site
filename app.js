@@ -16,7 +16,7 @@ app.set('views','./views/pages');//设置视图的根目录
 app.set('view engine','jade');//设置默认的模板引擎
 app.use(bodyParser.json());  //对表单提交的数据进行格式化 bodyParser.json()?
 app.use(bodyParser.urlencoded({ extended: true}));
-app.use(express.static(path.join(__dirname,'bower_components')));//托管静态资源
+app.use(express.static(path.join(__dirname,'public')));//托管静态资源
 app.locals.moment = require('moment'); //添加moment模块
 app.listen(port);
 
