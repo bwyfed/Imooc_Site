@@ -59,4 +59,4 @@ UserSchema.statics = {
     }
 };
 
-module.exports = MovieSchema;
+module.exports = UserSchema;

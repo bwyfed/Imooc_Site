@@ -10,6 +10,7 @@ var port = process.env.PORT || 3000; //获取命令行里的全局环境变量
 var app = express();    //创建web服务器
 
 var Movie = require('./models/movie');  //加载Movie数据模型
+var User = require('./models/user');    //加载User数据模型
 mongoose.connect('mongodb://localhost/imooc');//连接指定的数据库实例
 
 app.set('views','./views/pages');//设置视图的根目录
@@ -63,6 +64,58 @@ app.get('/',function(req, res){
     });*/
 });
 
+// signup 注册路由处理
+app.post('/user/signup',function(req, res){
+   var _user = req.body.user;
+   var user = new User(_user);
+   //首先看看当前数据库里面是否已经有了此用户
+   User.find({name: _user.name}, function(err, user){
+       if(err) {
+           console.log(err);
+       }
+       if(user) { //注册用户已存在，在跳转到首页
+           return res.redirect('/');
+       } else { //新用户注册，则保存到数据库，跳转到用户列表页
+           user.save(function(err, user) {
+               if(err) {
+                   console.log(err);
+               }
+               console.log(user);
+               res.redirect('/admin/userlist');   //重定向到用户列表页
+           });
+       }
+   });
+});
+// userlist page
+app.get('/admin/userlist',function(req, res){
+    User.fetch(function(err, users) {
+        if(err) {
+            console.log(err);
+        }
+        res.render('userlist',{
+            title: 'imooc 用户列表页',
+            users: users
+        })
+    })
+    /*
+     res.render('list',{
+     title: 'imooc 列表页',
+     movies: [
+     {
+     title: '机械战警',
+     _id: 1,
+     doctor: '何塞·帕迪里亚',
+     country: '美国',
+     year: 2014,
+     poster: 'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5',
+     language: '英语',
+     flash: 'http://player.youku.com/player.php/sid/XNjA1Njc0NTUy/v.swf',
+     summary: '翻拍自1987年同名科幻经典、由《精英部队》导演何塞·帕迪里亚执导的新版《机械战警》发布首款预告片。大热美剧《谋杀》男星乔尔·金纳曼化身新“机械战警”酷黑战甲亮相，加里·奥德曼、塞缪尔·杰克逊、迈克尔·基顿三大戏骨绿叶护航。预告片末更亮出了本片将登陆IMAX巨幕。新版《机械战警》故事背景跟原版一样，依旧设定在工业城市底特律，但故事年代已由之前设定的2020年变为了2028年，并且故事格局也明显扩大。在片中，金纳曼饰演的好警察墨菲将会被歹徒“杀死”，然后被进行军火开发的机器人公司Omni Corp改造成半人半机器的“机械战警”。'
+     }
+     ]
+     });
+     */
+});
 // detail page
 app.get('/movie/:id',function(req, res){
     var id = req.params.id; //获取movie的id
