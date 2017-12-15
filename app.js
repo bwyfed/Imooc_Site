@@ -85,6 +85,35 @@ app.post('/user/signup',function(req, res){
        }
    });
 });
+//signin 处理登录逻辑
+app.post('/user/signin',function(req, res){
+    var _user = req.body.user;
+    var name = _user.name;
+    var password = _user.password;
+
+    //在数据库中查询是否这个名字的用户存在
+    User.findOne({name: name},function(err, user){
+        if(err) {
+            console.log(err);
+        }
+        if(!user) {
+            //如果用户不存在，则直接返回到首页
+            res.redirect('/');
+        }
+        //对比密码是否匹配，调用模型实例上的一个方法
+        user.comparePassword(password,function(err,isMatch){
+            if (err) {
+                console.log(err);
+            }
+            if(isMatch) {
+                console.log('Password is matched');
+                return res.redirect('/');
+            } else {
+                console.log('Password is not matched');
+            }
+        })
+    });
+});
 // userlist page
 app.get('/admin/userlist',function(req, res){
     User.fetch(function(err, users) {

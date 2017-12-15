@@ -47,6 +47,15 @@ UserSchema.pre('save',function(next){
     */
     next();
 });
+//添加实例方法
+UserSchema.methods = {
+    comparePassword: function(_password, cb) {
+        bcrypt.compare(_password, this.password, function (err, isMatch) {
+            if(err) return cb(err);
+            cb(null,isMatch);
+        });
+    }
+};
 //增加一些静态方法，经过Model实例化后才有这些方法
 UserSchema.statics = {
     //取出目前数据库的所有数据
