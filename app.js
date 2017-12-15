@@ -67,20 +67,19 @@ app.get('/',function(req, res){
 // signup 注册路由处理
 app.post('/user/signup',function(req, res){
    var _user = req.body.user;
-   var user = new User(_user);
    //首先看看当前数据库里面是否已经有了此用户
    User.find({name: _user.name}, function(err, user){
        if(err) {
            console.log(err);
        }
-       if(user) { //注册用户已存在，在跳转到首页
+       if(user.length) { //注册用户已存在，在跳转到首页
            return res.redirect('/');
        } else { //新用户注册，则保存到数据库，跳转到用户列表页
-           user.save(function(err, user) {
+           var newuser = new User(_user);
+           newuser.save(function(err, user) {
                if(err) {
                    console.log(err);
                }
-               console.log(user);
                res.redirect('/admin/userlist');   //重定向到用户列表页
            });
        }

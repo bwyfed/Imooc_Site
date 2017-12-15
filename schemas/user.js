@@ -31,6 +31,10 @@ UserSchema.pre('save',function(next){
     } else {
         this.meta.updateAt = Date.now();
     }
+    var salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
+    var hash = bcrypt.hashSync(user.password,salt);
+    user.password = hash;
+    /*
     bcrypt.genSalt(SALT_WORK_FACTOR,function(err, salt) {
         if(err) next(err);
 
@@ -40,6 +44,7 @@ UserSchema.pre('save',function(next){
             next();
         })
     });
+    */
     next();
 });
 //增加一些静态方法，经过Model实例化后才有这些方法
