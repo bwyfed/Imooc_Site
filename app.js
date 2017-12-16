@@ -11,6 +11,7 @@ var app = express();    //创建web服务器
 
 var Movie = require('./models/movie');  //加载Movie数据模型
 var User = require('./models/user');    //加载User数据模型
+var Treedata = require('./models/treedata');    //加载Treedata数据类型
 mongoose.connect('mongodb://localhost/imooc');//连接指定的数据库实例
 
 app.set('views','./views/pages');//设置视图的根目录
@@ -282,5 +283,19 @@ app.delete('/admin/list',function(req,res){
             }
         });
     }
+});
+
+// get treedata 获取树形数据
+app.get('/admin/treedata', function(req, res) {
+    Treedata.fetch(function(err,tree){
+        if(err) {
+            console.log(err);
+        }
+        console.log('get tree data:');
+        console.log(tree);
+        res.json({
+            success: 'ok'
+        });
+    });
 });
 

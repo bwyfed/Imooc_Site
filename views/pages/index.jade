@@ -11,3 +11,8 @@ block content
                         .caption
                             h3 #{item.title}
                             p: a.btn.btn-primary(href="/movie/#{item._id}", role="button") 观看预告片
+        .row
+            button#getTreeBtn.btn.btn-default 获取树形数据
+            div.tree-container 树形数据
+
+    script( src="/js/index.js")
