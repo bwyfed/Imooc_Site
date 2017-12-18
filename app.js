@@ -287,15 +287,35 @@ app.delete('/admin/list',function(req,res){
 
 // get treedata 获取树形数据
 app.get('/admin/treedata', function(req, res) {
+    var arr = [],newarr=[],current,currentDoc;
+    Treedata.findOne({_id: "Programming"},function(err, currentNode){
+        currentDoc = currentNode._doc;
+        console.log(currentDoc);
+        arr.push(currentNode._doc);//arr表示当前队列
+        while(arr.length>0) {
+            current = arr.shift();
+            newarr.push(current);
+            while(currentDoc.children&&currentDoc.children.length>0) {
+                current = currentDoc.children.shift();
+                currentDoc = Treedata.findOne({_id: current});
+                arr.push(currentDoc);
+            }
+        }
+        console.log('平行遍历结果:');
+        console.log(newarr);
+    });
+    /*
     Treedata.fetch(function(err,tree){
         if(err) {
             console.log(err);
         }
         console.log('get tree data:');
         console.log(tree);
+        var root = 'Books'; //树形根节点
         res.json({
             success: 'ok'
         });
     });
+    */
 });
 
