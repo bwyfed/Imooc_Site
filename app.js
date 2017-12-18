@@ -6,6 +6,8 @@ var path = require('path');
 var mongoose = require('mongoose');
 var _ = require('underscore');
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');   //session中间件
 var port = process.env.PORT || 3000; //获取命令行里的全局环境变量
 var app = express();    //创建web服务器
 
@@ -18,6 +20,10 @@ app.set('views','./views/pages');//设置视图的根目录
 app.set('view engine','jade');//设置默认的模板引擎
 app.use(bodyParser.json());  //对表单提交的数据进行格式化 bodyParser.json()?
 app.use(bodyParser.urlencoded({ extended: true}));
+app.use(cookieParser());
+app.use(session({
+    secret: 'imooc'
+}));
 app.use(express.static(path.join(__dirname,'public')));//托管静态资源
 app.locals.moment = require('moment'); //添加moment模块
 app.listen(port);
@@ -26,6 +32,8 @@ console.log('imooc start on port ' + port);
 
 // index page
 app.get('/',function(req, res){
+    console.log('user in sesssion:');
+    console.log(req.session.user);
     Movie.fetch(function(err,movies){
         if(err) {
             console.log(err);
@@ -108,6 +116,7 @@ app.post('/user/signin',function(req, res){
             }
             if(isMatch) {
                 console.log('Password is matched');
+                req.session.user = user;    //将user存储在会话中
                 return res.redirect('/');
             } else {
                 console.log('Password is not matched');
