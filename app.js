@@ -8,13 +8,15 @@ var _ = require('underscore');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');   //session中间件
+var mongoStore = require('connect-mongo')(session);
 var port = process.env.PORT || 3000; //获取命令行里的全局环境变量
 var app = express();    //创建web服务器
+var dbUrl = 'mongodb://localhost/imooc';
 
 var Movie = require('./models/movie');  //加载Movie数据模型
 var User = require('./models/user');    //加载User数据模型
 var Treedata = require('./models/treedata');    //加载Treedata数据类型
-mongoose.connect('mongodb://localhost/imooc');//连接指定的数据库实例
+mongoose.connect(dbUrl);//连接指定的数据库实例
 
 app.set('views','./views/pages');//设置视图的根目录
 app.set('view engine','jade');//设置默认的模板引擎
@@ -22,7 +24,11 @@ app.use(bodyParser.json());  //对表单提交的数据进行格式化 bodyParse
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(cookieParser());
 app.use(session({
-    secret: 'imooc'
+    secret: 'imooc',
+    store: new mongoStore({
+        url: dbUrl,
+        collection: 'sessions'
+    })
 }));
 app.use(express.static(path.join(__dirname,'public')));//托管静态资源
 app.locals.moment = require('moment'); //添加moment模块
