@@ -36,15 +36,19 @@ app.listen(port);
 
 console.log('imooc start on port ' + port);
 
+//pre handle user
+app.use(function (req, res, next) {
+    var _user = req.session.user;
+    if(_user) {
+        app.locals.user = _user;    //存储在本地数据中
+    }
+    next();
+});
 // index page
 app.get('/',function(req, res){
     console.log('user in sesssion:');
     console.log(req.session.user);
 
-    var _user = req.session.user;
-    if(_user) {
-        app.locals.user = _user;    //存储在本地数据中
-    }
     Movie.fetch(function(err,movies){
         if(err) {
             console.log(err);
