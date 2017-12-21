@@ -3,6 +3,7 @@
  */
 var express = require('express');
 var path = require('path');
+var logger = require('morgan');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
@@ -29,6 +30,12 @@ app.use(session({
 }));
 app.use(express.static(path.join(__dirname,'public')));//托管静态资源
 app.locals.moment = require('moment'); //添加moment模块
+if ('development' === app.get('env')) {
+    app.set('showStackError', true);
+    app.use(logger(':method :url :status'));
+    app.locals.pretty = true;
+    mongoose.set('debug', true);
+}
 require('./config/routes')(app);
 app.listen(port);
 
