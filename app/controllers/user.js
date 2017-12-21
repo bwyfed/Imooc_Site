@@ -3,6 +3,19 @@
  *  处理用户相关的控制器
  */
 var User = require('../models/user');    //加载User数据模型
+
+exports.showSignup = function(req, res) {
+    res.render('signup', {
+        title: '注册页面'
+    })
+};
+
+exports.showSignin = function(req, res) {
+    res.render('signin', {
+        title: '登录页面'
+    })
+};
+
 // signup 注册路由处理
 exports.signup = function(req, res){
     var _user = req.body.user;
@@ -11,15 +24,15 @@ exports.signup = function(req, res){
         if(err) {
             console.log(err);
         }
-        if(user.length) { //注册用户已存在，在跳转到首页
-            return res.redirect('/');
+        if(user.length) { //注册用户已存在，在跳转到登录页面
+            return res.redirect('/signin');
         } else { //新用户注册，则保存到数据库，跳转到用户列表页
             var newuser = new User(_user);
             newuser.save(function(err, user) {
                 if(err) {
                     console.log(err);
                 }
-                res.redirect('/admin/userlist');   //重定向到用户列表页
+                res.redirect('/');   //重定向到首页
             });
         }
     });
@@ -36,8 +49,8 @@ exports.signin = function(req, res){
             console.log(err);
         }
         if(!user) {
-            //如果用户不存在，则直接返回到首页
-            res.redirect('/');
+            //如果用户不存在，则重定向到注册页面
+            res.redirect('/signup');
         }
         //对比密码是否匹配，调用模型实例上的一个方法
         user.comparePassword(password,function(err,isMatch){
@@ -50,6 +63,7 @@ exports.signin = function(req, res){
                 return res.redirect('/');
             } else {
                 console.log('Password is not matched');
+                res.redirect('/signin');    //密码不对，继续重定向到登录页面
             }
         })
     });
