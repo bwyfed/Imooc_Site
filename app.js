@@ -13,10 +13,10 @@ var port = process.env.PORT || 3000; //获取命令行里的全局环境变量
 var app = express();    //创建web服务器
 var dbUrl = 'mongodb://localhost/imooc';
 
-var Treedata = require('./models/treedata');    //加载Treedata数据类型
+var Treedata = require('./app/models/treedata');    //加载Treedata数据类型
 mongoose.connect(dbUrl);//连接指定的数据库实例
 
-app.set('views','./views/pages');//设置视图的根目录
+app.set('views','./app/views/pages');//设置视图的根目录
 app.set('view engine','jade');//设置默认的模板引擎
 app.use(bodyParser.json());  //对表单提交的数据进行格式化 bodyParser.json()?
 app.use(bodyParser.urlencoded({ extended: true}));
