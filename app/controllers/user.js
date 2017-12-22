@@ -50,7 +50,7 @@ exports.signin = function(req, res){
         }
         if(!user) {
             //如果用户不存在，则重定向到注册页面
-            res.redirect('/signup');
+            return res.redirect('/signup');
         }
         //对比密码是否匹配，调用模型实例上的一个方法
         user.comparePassword(password,function(err,isMatch){
@@ -85,4 +85,22 @@ exports.list = function(req, res){
             users: users
         })
     })
+};
+
+//middleware for user 登录的中间件
+exports.signinRequired = function(req, res, next) {
+    var user = req.session.user;
+    if (!user) {
+        return res.redirect('/signin');
+    }
+    next();
+};
+
+//middleware for user 权限的中间件
+exports.adminRequired = function(req, res, next) {
+    var user = req.session.user;
+    if (user.role <= 10) {
+        return res.redirect('/signin');
+    }
+    next();
 };
