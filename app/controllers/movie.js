@@ -3,16 +3,19 @@
  */
 var _ = require('underscore');
 var Movie = require('../models/movie');  //加载Movie数据模型
-
+var Comment = require('../models/comment');
 //detail page
 exports.detail = function(req, res) {
     var id = req.params.id;
     if(id) {
         Movie.findById(id, function (err, movie) {
-            res.render('detail', {
-                title: 'imooc 详情页',
-                movie: movie
-            })
+            Comment.findById(id, function(err, comments) {
+                res.render('detail', {
+                    title: 'imooc 详情页',
+                    movie: movie,
+                    comments: comments
+                })
+            });
         })
     }
 };
