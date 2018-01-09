@@ -10,7 +10,7 @@ module.exports = function(app) {
     //pre handle user
     app.use(function (req, res, next) {
         var _user = req.session.user;
-        app.locals.user = _user;    //存储在本地数据中
+        app.locals.user = _user;    //程序的本地变量,存储在本地数据中
         next();
     });
 

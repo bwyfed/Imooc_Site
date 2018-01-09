@@ -3,11 +3,13 @@
  */
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var ObjectId = Schema.Types.ObjectId;
+var ObjectId = Schema.Types.ObjectId; //通过引用的方式传递电影ID
 
 var CommentSchema = new Schema({
-    movie: {type: ObjectId, ref: 'Movie'},
+    movie: {type: ObjectId, ref: 'Movie'},  //通过引用传递ObjectId实现关联文档的查询
     from: {type: ObjectId, ref: 'User'},
+    to: {type: ObjectId, ref: 'User'},  //回复给谁
+    content: String,
     reply: [{
         from: {type: ObjectId, ref: 'User'},
         to: {type: ObjectId, ref: 'User'},

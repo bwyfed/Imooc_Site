@@ -90,7 +90,7 @@ exports.list = function(req, res){
 //middleware for user 登录的中间件
 exports.signinRequired = function(req, res, next) {
     var user = req.session.user;
-    app.locals.user = user;
+    // app.locals.user = user;
     if (!user) {
         return res.redirect('/signin');
     }
